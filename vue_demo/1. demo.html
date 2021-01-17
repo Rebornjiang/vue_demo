@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <my-component></my-component>
+      <input type="text" v-model="formData1.name" />
+      <input type="text" v-model="formData2.age" />
+      <!-- <my-component></my-component> -->
+      <!-- <div :style="[styleObj, secondStyleObj, {backgroundColor: 'blue'}]">
+        {{formConfig}}
+      </div> -->
+      <div v-for="(value, prop) of renderObj">
+        {{prop + ':' +value}}
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+      console.log(require, 'require ')
+      
+      Vue.component('my-component', {
+        template: '<div>hellowworld</div>'
+      })
+      function formConfig(that) {
+        return [
+          {
+            label: "姓名",
+            value: "姜通",
+            hidden: that.isHidden,
+          },
+        ];
+      }
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          msg: "hello world",
+          formData1: {
+            // greeting: "你好",
+          },
+          formData2: {},
+          isHidden: false,
+          styleObj: {
+            border: "1px solid #ccc",
+          },
+          secondStyleObj: {
+            "margin-top": "50px",
+          },
+          renderObj: {
+            name: "reborn",
+            age: 21,
+            tall: 170,
+          },
+        },
+        computed: {
+          formConfig: {
+            // 计算属性获取值
+            get() {
+              return formConfig(this);
+            },
+            // 给计算属性设置值, 设置值并不会引起计算属性的变化，计算属性的变化仅在计算属性中所依赖的响应数据发生变化时才会重新计算。
+            set(newVal) {
+              if (typeof newVal === "boolean" && newVal) {
+                this.isHidden = true;
+              }
+            },
+          },
+        },
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 引入样式 -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    /> -->
+    <title>Document</title>
+    <style>
+      .quoteWrap {
+        padding: 20px;
+        border: 1px solid #cccccc;
+      }
+
+      .quoteTable {
+        padding: 10px;
+        border: 1px solid lime;
+        display: flex;
+        height: 200px;
+      }
+      .column {
+        flex: 1;
+        height: 100%;
+        border-right: 1px solid #cccccc;
+      }
+
+      .buttonList {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="quoteWrap">
+        <template v-for="(table, tableIndex) of quoteTableList">
+          <div class="quoteTable">
+            <div
+              class="column"
+              v-for="(column, columnIndex) of table.tableData "
+            >
+            <div v-for="(value, prop) of column">{{prop + ' : ' + value}}</div>
+          </div>
+          </div>
+          <div class="buttonList">
+            <button @click="addColumn(tableIndex)">添加一列</button>
+            <button @click="copyTable(table)">复制 table</button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- 引入组件库 -->
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script>
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          quoteTableList: [
+            {
+              tableData: [
+                {
+                  name: 'reborn',
+                  age: 18,
+                  gender: 'male',
+                  salaray: 'secret'
+                },
+              ],
+            },
+          ],
+        },
+        computed: {},
+        methods: {
+          addColumn(index) {
+            this.quoteTableList[index].tableData.push({
+                  name: '',
+                  age: '',
+                  gender: '',
+                  salaray: ''
+                });
+          },
+          copyTable(table) {
+            this.quoteTableList.push(JSON.parse(JSON.stringify(table)))
+          }
+        },
+      });
+    </script>
+  </body>
+</html>

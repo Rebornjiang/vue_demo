@@ -1,0 +1,171 @@
+<template>
+  <div class="excel-container">
+    <div id="x-spreadsheet-demo"></div>
+  </div>
+</template>
+// 一款页面内嵌入excel的插件
+<script>
+import Spreadsheet from 'x-data-spreadsheet'
+import zhCN from 'x-data-spreadsheet/dist/locale/zh-cn'
+Spreadsheet.locale('zh-cn', zhCN)
+export default {
+  name: 'excel',
+  components: {},
+  props: {
+    dimensionList: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
+  data() {
+    return {
+      msg: 'hello',
+      excelInstance: '',
+      contractModal: false,
+      excelOption: {
+        mode: 'edit',
+        showToolbar: true,
+        showGrid: true,
+        showContextmenu: true,
+        view: {
+          height: () => 1024,
+          width: () => document.querySelector('.excel-container').clientWidth
+        }
+      },
+      // excelRows
+      excelRows: {
+        len: 80,
+        0: {
+          cells: {
+            0: { text: '城市:', style: 0 },
+            1: { text: '全国', style: 0 }
+          }
+        }
+      }
+    }
+  },
+  mounted() {
+    this.initExcel()
+    // 一下是在只读的条件下渲染的数据
+  },
+  methods: {
+    initExcel() {
+      let thead = {}
+      for (let i = 0; i < this.dimensionList.length; i++) {
+        thead[i] = { text: `${(this.dimensionList[i] || {}).text}`, style: 0 }
+      }
+      this.excelRows[1] = {
+        cells: thead
+      }
+      const rows = this.excelRows
+      const s = new Spreadsheet('#x-spreadsheet-demo', this.excelOption)
+        .loadData([
+          {
+            styles: [
+              {
+                bgcolor: '#f4f5f8',
+
+                color: '#666666',
+
+                font: {
+                  bold: true,
+                  size: 14
+                }
+              }
+            ],
+            cols: {
+              len: 13,
+              2: { width: 200 }
+            },
+            rows
+          }
+        ]) // load data
+        .change((data) => {
+          // save data to db
+          this.$parent.quoteRateData.excelData =
+            s.getData()[0] && s.getData()[0].rows
+          // console.log(s.getData()[0] && s.getData()[0].rows)
+        })
+
+      // data validation
+      s.validate()
+      this.excelInstance = s
+    },
+    addDataInExcel() {
+      let thead = {}
+      for (let i = 0; i < this.dimensionList.length; i++) {
+        thead[i] = { text: `${(this.dimensionList[i] || {}).text}`, style: 0 }
+      }
+      this.excelRows[1] = {
+        cells: thead
+      }
+      const rows = this.excelRows
+      this.excelInstance.loadData([
+        {
+          styles: [
+            {
+              bgcolor: '#f4f5f8',
+
+              color: '#666666',
+
+              font: {
+                bold: true,
+                size: 14
+              }
+            }
+          ],
+          cols: {
+            len: 13,
+            2: { width: 200 }
+          },
+          rows
+        }
+      ])
+    },
+    addData() {
+      // 第一个参数为行， 第二个参数为列， 第三个参数为值
+      // console.log(this.excelInstance, 'instance')
+      this.excelInstance.cellText(5, 5, 'xxxx').cellText(6, 5, 'yyy').reRender()
+    },
+    deleteFn() {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
+  },
+  watch: {
+    dimensionList: {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.addDataInExcel()
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.excel-container {
+  width: 100%;
+
+  .search-wrap {
+    margin-bottom: 20px;
+  }
+}
+</style>
